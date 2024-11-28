@@ -59,6 +59,9 @@ int f2/1
 no shut
 no switchport
 ip address 192.122.12.1 255.255.255.128
+
+end
+write
 ```
 
 ### Vigo
@@ -74,6 +77,9 @@ ip address 192.90.12.1 255.255.255.0
 int f1/0
 no shut
 ip address 192.1.1.145 255.255.255.252
+
+end
+write
 ```
 
 ### Porto
@@ -84,10 +90,14 @@ no shut
 ip address 192.1.1.134 255.255.255.252
 int f0/1
 no shut
+ip ospf 1 area 0
 ip address 192.88.123.1 255.255.255.192
 int f1/0
 no shut
 ip address 192.1.1.146 255.255.255.252
+
+end
+write
 ```
 
 ### Lisboa
@@ -98,10 +108,15 @@ no shut
 ip address 192.1.1.142 255.255.255.252
 int f0/1
 no shut
+ip ospf 1 area 0
 ip address 192.88.123.2 255.255.255.192
 int f1/0
 no shut
+ip ospf 1 area 0
 ip address 192.88.124.5 255.255.255.252
+
+end
+write
 ```
 
 ### Coimbra
@@ -109,7 +124,11 @@ ip address 192.88.124.5 255.255.255.252
 conf t
 int f0/0
 no shut
+ip ospf 1 area 0
 ip address 192.88.123.3 255.255.255.192
+
+end
+write
 ```
 
 ### Aveiro
@@ -117,10 +136,15 @@ ip address 192.88.123.3 255.255.255.192
 conf t
 int f0/0
 no shut
+ip ospf 1 area 0
 ip address 192.88.123.4 255.255.255.192
 int f0/1
 no shut
+ip ospf 1 area 0
 ip address 192.88.124.1 255.255.255.252
+
+end
+write
 ```
 
 ### CompanyALisboa
@@ -128,10 +152,15 @@ ip address 192.88.124.1 255.255.255.252
 conf t
 int f0/0
 no shut
+ip ospf 1 area 0
 ip address 192.88.124.6 255.255.255.252
 int f0/1
 no shut
+ip ospf 1 area 0
 ip address 192.88.125.129 255.255.255.192
+
+end
+write
 ```
 
 ### CompanyALeiria
@@ -139,10 +168,15 @@ ip address 192.88.125.129 255.255.255.192
 conf t
 int f0/0
 no shut
+ip ospf 1 area 0
 ip address 192.88.123.5 255.255.255.192
 int f0/1
 no shut
+ip ospf 1 area 0
 ip address 192.88.125.65 255.255.255.192
+
+end
+write
 ```
 
 ### CompanyAAveiro
@@ -150,8 +184,13 @@ ip address 192.88.125.65 255.255.255.192
 conf t
 int f0/0
 no shut
+ip ospf 1 area 0
 ip address 192.88.124.2 255.255.255.252
 int f0/1
 no shut
+ip ospf 1 area 0
 ip address 192.88.125.193 255.255.255.192
+
+end
+write
 ```
