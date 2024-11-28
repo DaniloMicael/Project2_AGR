@@ -23,4 +23,3 @@
 
 - É preciso BGP no National Provider 1 nos routers Porto, Lisboa, Coimbra e Aveiro
 - É preciso BGP nos routers Coimbra e Aveiro para eu poder escolher por onde sair, ou seja, no router Coimbra configuro BGP para sair por Lisboa e no router Aveiro configuro para sair pelo Porto
-- 
