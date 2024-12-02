@@ -23,3 +23,18 @@
 
 - É preciso BGP no National Provider 1 nos routers Porto, Lisboa, Coimbra e Aveiro
 - É preciso BGP nos routers Coimbra e Aveiro para eu poder escolher por onde sair, ou seja, no router Coimbra configuro BGP para sair por Lisboa e no router Aveiro configuro para sair pelo Porto
+
+
+## Slides Hints
+
+### 1. Traffic from Coimbra should go preferably by Lisboa, while traffic from Aveiro should go preferably by Porto
+
+![First Bullet Point](../images/first_point.png)
+
+### 2. National providers should not transport traffic between other national providers and the International provider
+
+![Second Bullet Point](../images/second_point.png)
+
+### OSPF Config Example
+
+![OSPF config ecample](../images/ospf_config_example.png)
