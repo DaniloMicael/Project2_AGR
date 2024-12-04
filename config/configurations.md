@@ -168,6 +168,8 @@ write
 
 ### Coimbra
 ```txt
+# ----- Basic Config -----
+
 conf t
 int f0/0
 no shut
@@ -180,6 +182,8 @@ write
 
 ### Aveiro
 ```txt
+# ----- Basic Config -----
+
 conf t
 int f0/0
 no shut
@@ -196,6 +200,8 @@ write
 
 ### CompanyALisboa
 ```txt
+# ----- Basic Config -----
+
 conf t
 int f0/0
 no shut
@@ -212,6 +218,8 @@ write
 
 ### CompanyALeiria
 ```txt
+# ----- Basic Config -----
+
 conf t
 int f0/0
 no shut
@@ -228,6 +236,8 @@ write
 
 ### CompanyAAveiro
 ```txt
+# ----- Basic Config -----
+
 conf t
 int f0/0
 no shut

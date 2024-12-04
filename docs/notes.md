@@ -38,3 +38,17 @@
 ### OSPF Config Example
 
 ![OSPF config ecample](../images/ospf_config_example.png)
+
+## Duvidas
+
+### Internet
+
+ta topo!
+
+### Neighbors
+
+porto vai ter neighbors Vigo Londres Lisboa Coimbra e Aveiro. Lisboa -> Porto Londres Coimbra e Aveiro
+
+### Redes de ligacao entre AS
+
+nao sao anunciadas
