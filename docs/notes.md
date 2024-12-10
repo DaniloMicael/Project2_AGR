@@ -52,3 +52,34 @@ porto vai ter neighbors Vigo Londres Lisboa Coimbra e Aveiro. Lisboa -> Porto Lo
 ### Redes de ligacao entre AS
 
 nao sao anunciadas
+
+
+### Coimbra Antes
+
+```txt
+Coimbra#show ip bgp
+BGP table version is 15, local router ID is 192.88.123.3
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal,
+              r RIB-failure, S Stale
+Origin codes: i - IGP, e - EGP, ? - incomplete
+
+   Network          Next Hop            Metric LocPrf Weight Path
+* i100.100.100.0/24 192.1.1.133              0    100      0 4589 i
+r i192.88.123.0/26  192.88.123.2             0    100      0 ?
+r>i                 192.88.123.1             0    100      0 ?
+r i192.88.124.0/30  192.88.123.4            20    100      0 ?
+r>i                 192.88.123.4            20    100      0 ?
+r>i192.88.124.4/30  192.88.123.2             0    100      0 ?
+r i                 192.88.123.2            11    100      0 ?
+r i192.88.125.64/26 192.88.123.5            20    100      0 ?
+r>i                 192.88.123.5            20    100      0 ?
+r>i192.88.125.128/26
+                    192.88.124.6            11    100      0 ?
+r i                 192.88.123.2            21    100      0 ?
+r i192.88.125.192/26
+                    192.88.123.4            30    100      0 ?
+r>i                 192.88.123.4            30    100      0 ?
+* i192.90.12.0      192.1.1.145              0    100      0 4891 i
+* i192.122.12.0/25  192.1.1.133              0    100      0 4589 i
+
+```
