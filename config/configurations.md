@@ -73,6 +73,31 @@ network 100.100.100.0 mask 255.255.255.0
 network 192.122.12.0 mask 255.255.255.128
 
 end
+
+# ----- IPsec -----
+
+conf t
+
+crypto isakmp policy 30
+authentication pre-share
+crypto isakmp key labcom address 192.88.123.5
+crypto ipsec transform-set authT ah-sha-hmac
+crypto ipsec transform-set cipherT esp-des
+crypto ipsec transform-set auth_ciphT ah-sha-hmac esp-des
+crypto ipsec profile ARipsec
+set transform-set auth_ciphT authT cipherT
+
+interface Tunnel 0
+ip unnumbered FastEthernet2/1
+tunnel source 192.122.12.1
+tunnel destination 192.88.123.5
+tunnel mode ipsec ipv4
+tunnel protection ipsec profile ARipsec
+exit
+
+ip route 192.88.125.65 255.255.255.255 Tunnel0
+
+end
 write
 ```
 
@@ -169,6 +194,23 @@ neighbor 192.88.123.4 route-map routes-out out
 neighbor 192.88.123.4 send-community
 
 end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/1
+
+end
 write
 ```
 
@@ -230,6 +272,36 @@ neighbor 192.88.123.4 route-map routes-out out
 neighbor 192.88.123.4 send-community
 
 end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels    
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+int f1/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/1
+exit
+
+interface Tunnel 1
+ip unnumbered FastEthernet0/1                                    
+tunnel destination 192.88.123.4
+tunnel mode mpls traffic-eng
+tunnel mpls traffic-eng bandwidth 2000
+tunnel mpls traffic-eng autoroute announce
+tunnel mpls traffic-eng path-option 1 dynamic
+
+end
 write
 ```
 
@@ -267,6 +339,23 @@ set local-preference 200
 router bgp 8657
 neighbor 192.88.123.1 route-map routes-in in
 neighbor 192.88.123.2 route-map routes-in in
+
+end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/0
 
 end
 write
@@ -312,6 +401,36 @@ neighbor 192.88.123.1 route-map routes-in in
 neighbor 192.88.123.2 route-map routes-in in
 
 end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/0
+exit
+
+interface Tunnel 1
+ip unnumbered FastEthernet0/0                                     
+tunnel destination 192.88.123.2
+tunnel mode mpls traffic-eng
+tunnel mpls traffic-eng bandwidth 2000
+tunnel mpls traffic-eng autoroute announce
+tunnel mpls traffic-eng path-option 1 dynamic
+
+end
 write
 ```
 
@@ -328,6 +447,27 @@ int f0/1
 no shut
 ip ospf 1 area 0
 ip address 192.88.125.129 255.255.255.192
+
+end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/0
 
 end
 write
@@ -348,6 +488,52 @@ ip ospf 1 area 0
 ip address 192.88.125.65 255.255.255.192
 
 end
+
+# ----- IPsec -----
+
+conf t
+
+crypto isakmp policy 30
+authentication pre-share
+crypto isakmp key labcom address 192.122.12.1
+crypto ipsec transform-set authT ah-sha-hmac
+crypto ipsec transform-set cipherT esp-des
+crypto ipsec transform-set auth_ciphT ah-sha-hmac esp-des
+crypto ipsec profile ARipsec
+set transform-set auth_ciphT authT cipherT
+
+interface Tunnel 0
+ip unnumbered FastEthernet0/0
+tunnel source 192.88.123.5
+tunnel destination 192.122.12.1
+tunnel mode ipsec ipv4
+tunnel protection ipsec profile ARipsec
+exit
+
+ip route 100.100.100.2 255.255.255.255 Tunnel0
+
+end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/0
+
+end
 write
 ```
 
@@ -366,5 +552,70 @@ ip ospf 1 area 0
 ip address 192.88.125.193 255.255.255.192
 
 end
+
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id FastEthernet0/0
+
+end
 write
+```
+
+
+## MPLS Doubts
+
+### Em todos os routers
+
+```txt
+# ----- MPLS config -----
+
+conf t
+ip cef
+mpls ip
+mpls traffic-eng tunnels
+int f0/0
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+int f0/1
+mpls ip
+mpls traffic-eng tunnels
+ip rsvp bandwidth 2000 2000
+```
+
+- em que interfaces tenho de fazer isto? R: podemos meter em todos os routers, todas as interfaces, menos as que vao pra outro as
+
+```txt
+router ospf 1
+mpls traffic-eng area 0
+mpls traffic-eng router-id Loopback 0
+```
+
+- preciso de um loopback em todos os routers? ou posso usar uma interface qualquer? R: qualquer uma fisica
+
+### No router Lisboa e Aveiro
+    
+```txt
+interface Tunnel 1
+ip unnumbered Loopback0                                     # usar loopback ou interface? r: a mesma do id
+tunnel destination 10.10.10.3                               # ip da loopback ou interface? r: de aveiro para lisboa meter destination f0/1, de lisboa para aveiro meter interface f0/0
+tunnel mode mpls traffic-eng
+tunnel mpls traffic-eng bandwidth 2000                      # aqui a bandwidth é 2000? r: sim
+tunnel mpls traffic-eng autoroute announce
+tunnel mpls traffic-eng path-option 1 dynamic
 ```

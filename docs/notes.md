@@ -35,7 +35,7 @@
 
 ![Second Bullet Point](../images/second_point.png)
 
-### OSPF Config Example
+## OSPF Config Example
 
 ![OSPF config ecample](../images/ospf_config_example.png)
 
@@ -83,3 +83,7 @@ r>i                 192.88.123.4            30    100      0 ?
 * i192.122.12.0/25  192.1.1.133              0    100      0 4589 i
 
 ```
+
+## IPsec config example
+
+![IPsec config example](../images/ipsec_config_example.png)
