@@ -184,13 +184,13 @@ end
 
 conf t
 ip bgp-community new-format
-route-map routes-out permit 10
+route-map routesA-out permit 10
 match route-type local
 set community 8657:1
 router bgp 8657
-neighbor 192.88.123.3 route-map routes-out out
+neighbor 192.88.123.3 route-map routesA-out out
 neighbor 192.88.123.3 send-community
-neighbor 192.88.123.4 route-map routes-out out
+neighbor 192.88.123.4 route-map routesA-out out
 neighbor 192.88.123.4 send-community
 
 end
@@ -262,13 +262,13 @@ end
 
 conf t
 ip bgp-community new-format
-route-map routes-out permit 10
+route-map routesA-out permit 10
 match route-type local
 set community 8657:2
 router bgp 8657
-neighbor 192.88.123.3 route-map routes-out out
+neighbor 192.88.123.3 route-map routesA-out out
 neighbor 192.88.123.3 send-community
-neighbor 192.88.123.4 route-map routes-out out
+neighbor 192.88.123.4 route-map routesA-out out
 neighbor 192.88.123.4 send-community
 
 end
@@ -292,14 +292,6 @@ router ospf 1
 mpls traffic-eng area 0
 mpls traffic-eng router-id FastEthernet0/1
 exit
-
-interface Tunnel 1
-ip unnumbered FastEthernet0/1                                    
-tunnel destination 192.88.123.4
-tunnel mode mpls traffic-eng
-tunnel mpls traffic-eng bandwidth 2000
-tunnel mpls traffic-eng autoroute announce
-tunnel mpls traffic-eng path-option 1 dynamic
 
 end
 write
@@ -422,14 +414,6 @@ mpls traffic-eng area 0
 mpls traffic-eng router-id FastEthernet0/0
 exit
 
-interface Tunnel 1
-ip unnumbered FastEthernet0/0                                     
-tunnel destination 192.88.123.2
-tunnel mode mpls traffic-eng
-tunnel mpls traffic-eng bandwidth 2000
-tunnel mpls traffic-eng autoroute announce
-tunnel mpls traffic-eng path-option 1 dynamic
-
 end
 write
 ```
@@ -468,6 +452,14 @@ ip rsvp bandwidth 2000 2000
 router ospf 1
 mpls traffic-eng area 0
 mpls traffic-eng router-id FastEthernet0/0
+
+interface Tunnel 1
+ip unnumbered FastEthernet0/0                                     
+tunnel destination 192.88.124.2
+tunnel mode mpls traffic-eng
+tunnel mpls traffic-eng bandwidth 2000
+tunnel mpls traffic-eng autoroute announce
+tunnel mpls traffic-eng path-option 1 dynamic
 
 end
 write
@@ -572,6 +564,14 @@ router ospf 1
 mpls traffic-eng area 0
 mpls traffic-eng router-id FastEthernet0/0
 
+interface Tunnel 1
+ip unnumbered FastEthernet0/0                                     
+tunnel destination 192.88.124.6
+tunnel mode mpls traffic-eng
+tunnel mpls traffic-eng bandwidth 2000
+tunnel mpls traffic-eng autoroute announce
+tunnel mpls traffic-eng path-option 1 dynamic
+
 end
 write
 ```
@@ -608,7 +608,7 @@ mpls traffic-eng router-id Loopback 0
 
 - preciso de um loopback em todos os routers? ou posso usar uma interface qualquer? R: qualquer uma fisica
 
-### No router Lisboa e Aveiro
+### No router CompanyALisboa e CompanyAAveiro
     
 ```txt
 interface Tunnel 1
@@ -619,3 +619,267 @@ tunnel mpls traffic-eng bandwidth 2000                      # aqui a bandwidth �
 tunnel mpls traffic-eng autoroute announce
 tunnel mpls traffic-eng path-option 1 dynamic
 ```
+
+
+show mpls traffic-eng tunnels
+
+show mpls interfaces
+
+show mpls forwarding-table
+
+show ip rsvp
+
+show ip rsvp interface
+
+show ip ospf neighbor
+
+
+## CompanyALisboa#trace 192.88.124.2
+
+```txt
+Type escape sequence to abort.
+Tracing the route to 192.88.124.2
+
+  1 192.88.124.5 [MPLS: Label 17 Exp 0] 16 msec 20 msec 24 msec
+  2 192.88.123.4 16 msec 24 msec 20 msec
+  3 192.88.124.2 24 msec 32 msec 20 msec
+```
+
+NOTE: Ou seja, existe connectividade básica ip/mpls
+
+## CompanyALisboa#show mpls traffic-eng tunnels  
+
+```txt
+Name: CompanyALisboa_t1                   (Tunnel1) Destination: 192.88.124.2
+  Status:
+    Admin: up         Oper: down   Path: not valid   Signalling: Down
+    path option 1, type dynamic
+
+  Config Parameters:
+    Bandwidth: 2000     kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  enabled   LockDown: disabled  Loadshare: 2000     bw-based
+    auto-bw: disabled
+
+  History:
+    Tunnel:
+      Time since created: 1 minutes, 45 seconds
+    Path Option 1:
+      Last Error: PCALC:: No path to destination, 192.88.125.193
+```
+
+NOTE: O tunnel está down, porque não existe caminho para o destino, why?
+
+
+
+# ================================================ #
+
+In this section we will try to solve the problems we have with the MPLS configuration.
+
+# Try using network
+
+## Porto
+int f0/1
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.123.0 0.0.0.63 area 0
+
+## Coimbra
+int f0/0
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.123.0 0.0.0.63 area 0
+
+## Lisboa
+int f0/1
+no ip ospf 1 area 0
+int f1/0
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.123.0 0.0.0.63 area 0
+network 192.88.124.4 0.0.0.3 area 0
+
+## Aveiro
+int f0/0
+no ip ospf 1 area 0
+int f0/1
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.123.0 0.0.0.63 area 0
+network 192.88.124.0 0.0.0.3 area 0
+
+## CompanyALisboa
+int f0/0
+no ip ospf 1 area 0
+int f0/1
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.124.4 0.0.0.3 area 0
+network 192.88.125.128 0.0.0.63 area 0
+
+## CompanyALeiria
+int f0/0
+no ip ospf 1 area 0
+int f0/1
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.123.0 0.0.0.63 area 0
+network 192.88.125.64 0.0.0.63 area 0
+
+## CompanyAAveiro
+int f0/0
+no ip ospf 1 area 0
+int f0/1
+no ip ospf 1 area 0
+router ospf 1
+network 192.88.124.0 0.0.0.3 area 0
+network 192.88.125.192 0.0.0.63 area 0
+
+```txt
+CompanyALisboa#show mpls traffic-eng tunnels 
+
+Name: CompanyALisboa_t1                   (Tunnel1) Destination: 192.88.124.2
+  Status:
+    Admin: up         Oper: down   Path: not valid   Signalling: Down
+    path option 1, type dynamic
+
+  Config Parameters:
+    Bandwidth: 0        kbps (Global)  Priority: 7  7   Affinity: 0x0/0xFFFF
+    Metric Type: TE (default)
+    AutoRoute:  enabled   LockDown: disabled  Loadshare: 0        bw-based
+    auto-bw: (86400/0) 0  Bandwidth Requested: 0       
+
+  History:
+    Tunnel:
+      Time since created: 2 minutes, 3 seconds
+    Path Option 1:
+      Last Error: RSVP:: Could not add RSVP Path: Invalid route specification
+```
+
+NOTE: agora o erro é diferente, **Last Error: RSVP:: Could not add RSVP Path: Invalid route specification**
+
+# Try using loopback interfaces
+
+## Porto
+int Lo0
+ip address 10.10.10.1 255.255.255.255
+router ospf 1
+network 10.10.10.1 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/1
+mpls traffic-eng router-id Loopback0
+
+## Lisboa
+int Lo0
+ip address 10.10.10.2 255.255.255.255
+router ospf 1
+network 10.10.10.2 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/1
+mpls traffic-eng router-id Loopback0
+
+## Coimbra
+int Lo0
+ip address 10.10.10.3 255.255.255.255
+router ospf 1
+network 10.10.10.3 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/0
+mpls traffic-eng router-id Loopback0
+
+## Aveiro
+int Lo0
+ip address 10.10.10.4 255.255.255.255
+router ospf 1
+network 10.10.10.4 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/0
+mpls traffic-eng router-id Loopback0
+
+## CompanyALisboa
+int Lo0
+ip address 10.10.10.5 255.255.255.255
+router ospf 1
+network 10.10.10.5 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/0
+mpls traffic-eng router-id Loopback0
+
+end
+
+conf t
+int Tunnel 1
+no ip unnumbered FastEthernet0/0                                     
+no tunnel destination 192.88.124.2
+ip unnumbered Loopback0
+tunnel destination 10.10.10.7
+
+## CompanyALeiria
+int Lo0
+ip address 10.10.10.6 255.255.255.255
+router ospf 1
+network 10.10.10.6 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/0
+mpls traffic-eng router-id Loopback0
+
+## CompanyAAveiro
+int Lo0
+ip address 10.10.10.7 255.255.255.255
+router ospf 1
+network 10.10.10.7 0.0.0.0 area 0
+no mpls traffic-eng router-id FastEthernet0/0
+mpls traffic-eng router-id Loopback0
+
+end
+
+conf t
+int Tunnel 1
+no ip unnumbered FastEthernet0/0                                     
+no tunnel destination 192.88.124.6
+ip unnumbered Loopback0
+tunnel destination 10.10.10.5
+
+# Change ipsec tunnel to loopback
+
+## CompanyALeiria
+no crypto isakmp key labcom address 192.122.12.1
+crypto isakmp key labcom address 10.10.10.8
+interface Tunnel 0
+no ip unnumbered FastEthernet0/0
+ip unnumbered Loopback0
+no tunnel source 192.88.123.5
+tunnel source 10.10.10.6
+no tunnel destination 192.122.12.1
+tunnel destination 10.10.10.8
+
+## Londres
+int Lo0
+ip address 10.10.10.8 255.255.255.255
+router bgp 4589
+network 10.10.10.8 mask 255.255.255.255
+end
+conf t
+no crypto isakmp key labcom address 192.88.123.5
+crypto isakmp key labcom address 10.10.10.6
+interface Tunnel 0
+no ip unnumbered FastEthernet2/1
+ip unnumbered Loopback0
+no tunnel source 192.122.12.1
+tunnel source 10.10.10.8
+no tunnel destination 192.88.123.5
+tunnel destination 10.10.10.6
+
+
+## Presentation
+
+DO:
+
+```txt
+clear ip ospf process
+```
+
+in CompanyA routers
+
+
+To test IPSec do:
+
+```txt
+ping 100.100.100.2 source 192.88.125.65
+```
+
+in Leiria
